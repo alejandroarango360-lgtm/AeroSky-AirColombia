@@ -8,120 +8,117 @@ Proyecto académico de la asignatura **Análisis y Diseño de Software** — Fun
 
 ## 🚀 Características Principales
 
-- 🔍 **Consulta de vuelos** en tiempo real por origen y destino
-- 🎫 **Compra de tiquetes** con bloqueo temporal de cupos (15 minutos)
-- 💳 **Procesamiento de pagos** con simulación de pasarela y rechazo
-- 📧 **Generación automática de PNR** único de 6 caracteres
-- ❌ **Cancelación de tiquetes** con devolución de cupos
-- 🛠️ **Módulo de administración** para gestionar vuelos (CRUD)
-- 📊 **Auditoría de pagos** (cada intento aprobado/rechazado queda registrado)
+- 🔍 **Consulta de vuelos** en tiempo real por origen, destino, fecha de ida y regreso.
+- ⚙️ **Filtros y ordenamiento** dinámico (por precio, duración, escalas y horario).
+- 🔄 **Validación de itinerarios** de ida y vuelta (evita seleccionar regresos anteriores a la ida).
+- 👥 **Registro múltiple de pasajeros** categorizados por edad (Adultos 18+, Jóvenes 2-17, Infantes 0-2).
+- 🛒 **Separación de comprador y pasajeros:** Permite registrar los datos del comprador cuando no viaja.
+- 🎫 **Compra de tiquetes** con bloqueo temporal de cupos (15 minutos) y liberación automática.
+- 💳 **Resumen de compra** con desglose de tarifas, impuestos y total antes de pagar.
+- 🔐 **Verificación 2FA:** Envío de código de seguridad real al correo del comprador para confirmar la transacción.
+- 📧 **Emisión de tiquetes:** Generación de PNR único (6 caracteres) y número de Tiquete Electrónico.
+- ❌ **Cancelación de tiquetes** con aplicación de penalidades según la clase tarifaria.
+- 🛠️ **Módulo de administración** para gestionar vuelos (CRUD).
+- 📊 **Auditoría de pagos** (cada intento aprobado/rechazado queda registrado en la BD).
 
 ---
 
 ## 🏗️ Arquitectura
 
-El sistema sigue una **arquitectura de 3 capas**:
+El sistema sigue una **arquitectura de 3 capas** + utilidades:
 
-```
+```text
 com.aircolombia.prototipo
 ├── dao/          → Capa de Persistencia (acceso a datos)
 ├── model/        → Modelos de dominio (POJOs)
 ├── service/      → Capa de Negocio (lógica y orquestación)
-└── view/         → Capa de Presentación (interfaces Swing)
-```
+├── view/         → Capa de Presentación (interfaces Swing)
+└── utils/        → Utilidades (ej. EmailService para envío de correos por SMTP)
+🗄️ Base de Datos
+Nombre: aircolombia_mvp (MySQL/MariaDB)
 
-- **Presentación** → depende de Negocio
-- **Negocio** → depende de Persistencia
-- **Persistencia** → independiente (solo conoce el modelo de datos)
+Tablas principales:
+Tabla	Descripción
+aeropuerto	Catálogo de aeropuertos (IATA, ciudad, país)
+aeronave	Flota de aeronaves
+vuelo	Vuelos programados (origen, destino, fecha, tarifa, escalas)
+pasajero	Datos de los pasajeros (incluye residencia y contacto)
+reserva	Reservas con código PNR, id_comprador y token de verificación
+reserva_pasajero	Relación reserva ↔ pasajero (marcando al titular)
+intentos_pago	Auditoría de transacciones de pago
+🛠️ Tecnologías Utilizadas
+Java 8+
 
----
+Swing (interfaz gráfica)
 
-## 🗄️ Base de Datos
+JDBC con MySQL Connector/J 9.4.0
 
-Nombre: **`aircolombia_mvp`** (MySQL/MariaDB)
+JavaMail API (envío de correos SMTP para verificación de pagos)
 
-### Tablas principales:
+MySQL / MariaDB (vía XAMPP)
 
-| Tabla | Descripción |
-|---|---|
-| `aeropuerto` | Catálogo de aeropuertos (IATA, ciudad, país) |
-| `aeronave` | Flota de aeronaves |
-| `vuelo` | Vuelos programados (origen, destino, fecha, tarifa) |
-| `pasajero` | Datos de los pasajeros |
-| `reserva` | Reservas con código PNR |
-| `reserva_pasajero` | Relación reserva ↔ pasajero |
-| `intentos_pago` | Auditoría de transacciones de pago |
+NetBeans IDE
 
----
+⚙️ Instalación y Ejecución
+Requisitos previos:
+Java JDK 8 o superior
 
-## 🛠️ Tecnologías Utilizadas
+MySQL / XAMPP
 
-- **Java 8+**
-- **Swing** (interfaz gráfica)
-- **JDBC** con MySQL Connector/J 9.4.0
-- **MySQL / MariaDB** (vía XAMPP)
-- **NetBeans IDE**
+NetBeans IDE
 
----
+Drivers: mysql-connector-j-9.4.0.jar, javax.mail.jar, jakarta.activation.jar
 
-## ⚙️ Instalación y Ejecución
+Pasos:
+Clonar el repositorio:
 
-### Requisitos previos:
-- Java JDK 8 o superior
-- MySQL / XAMPP
-- NetBeans IDE
-- Driver `mysql-connector-j-9.4.0.jar`
+bash
+git clone https://github.com/alejandroarango360-lgtm/AeroSky-AirColombia.git
+Crear la base de datos:
 
-### Pasos:
+Abre phpMyAdmin
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/tu-usuario/aerosky-sistema-aerocomercial.git
-   ```
+Ejecuta el script SQL del proyecto para crear la BD aircolombia_mvp.
 
-2. **Crear la base de datos:**
-   - Abre phpMyAdmin
-   - Ejecuta el script `database/aircolombia_mvp.sql`
+Abrir el proyecto en NetBeans:
 
-3. **Abrir el proyecto en NetBeans:**
-   - File → Open Project → selecciona la carpeta del proyecto
+File → Open Project → selecciona la carpeta del proyecto.
 
-4. **Agregar el driver de MySQL:**
-   - Clic derecho en Libraries → Add JAR/Folder → `mysql-connector-j-9.4.0.jar`
+Agregar las librerías:
 
-5. **Ejecutar:**
-   - Run File sobre `FrmPrincipal.java`
+Clic derecho en Libraries → Add JAR/Folder → agrega los 3 archivos .jar mencionados arriba.
 
----
+Configurar el correo (Opcional):
 
-## 📖 Flujo del Sistema
+En utils/EmailService.java, configura tu correo de Gmail y tu contraseña de aplicación para probar el envío del código de verificación.
 
-### Caso de uso principal: Compra de tiquetes
+Ejecutar:
 
-1. El usuario busca vuelos por origen, destino.
-2. El sistema muestra vuelos disponibles con precios.
-3. El usuario selecciona un vuelo y completa datos del pasajero.
-4. El sistema crea una **reserva pendiente** y **bloquea el cupo** por 15 minutos.
-5. El usuario ingresa método de pago (Tarjeta/PSE).
-6. El sistema procesa el pago a través de una **pasarela simulada**.
-7. Si el pago es aprobado → se confirma la reserva y se genera el **PNR**.
-8. Si el pago es rechazado → se permite reintentar dentro del tiempo límite.
+Run File sobre FrmPrincipal.java
 
-### Flujos alternativos:
+📖 Flujo del Sistema
+Caso de uso principal: Compra de tiquetes
+El usuario busca vuelos por origen, destino, fechas y cantidad de pasajeros.
 
-- **FA1:** Sin disponibilidad → sugiere fechas cercanas
-- **FA2:** Rechazo de pago → notifica motivo y permite reintentar
-- **FA3:** Timeout de 15 min → libera cupo y expira la reserva
+El sistema muestra vuelos disponibles (con filtros de precio, duración, escalas).
 
----
+El usuario selecciona un vuelo y completa los datos de todos los pasajeros.
 
-## 👥 Autores
+El sistema crea una reserva pendiente y bloquea los cupos por 15 minutos.
 
-- **Brian Steven Guevara Carvajal**
-- **Kevin Valvuena**
+El usuario llega al Resumen de Compra (ve el desglose de impuestos y el total).
 
----
+Al darle "Pagar Ahora", el sistema envía un código de 6 dígitos al correo real del usuario.
 
-## 📄 Licencia
+El usuario ingresa el código en la app (Verificación 2FA).
 
-Proyecto académico — Fundación Universitaria Konrad Lorenz. Uso educativo.
+Si el código es correcto → se emite el Tiquete y se confirma la reserva.
+
+Si el usuario cancela o el tiempo expira → se liberan los cupos automáticamente.
+
+👥 Autores
+
+
+Alejandro Arango
+
+konrad Lorenz. Uso educativo.
